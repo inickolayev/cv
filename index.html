@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nikolaev Igor — CTO / Head of Engineering</title>
+  <style>
+    .lang-switcher {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      gap: 4px;
+      background: #fff;
+      padding: 6px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 
+                  0 2px 6px rgba(0, 0, 0, 0.04);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(27, 87, 209, 0.08);
+    }
+    .lang-switcher a {
+      color: #1b57d1;
+      text-decoration: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 
+                   'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      min-width: 56px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .lang-switcher a:hover {
+      background: rgba(27, 87, 209, 0.06);
+      color: #1445a8;
+      transform: translateY(-1px);
+    }
+    .lang-switcher a:active {
+      transform: translateY(0);
+    }
+    .lang-switcher a.active {
+      background: linear-gradient(135deg, #1b57d1 0%, #1445a8 100%);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(27, 87, 209, 0.3),
+                  0 1px 3px rgba(27, 87, 209, 0.2);
+    }
+    .lang-switcher a.active:hover {
+      background: linear-gradient(135deg, #1445a8 0%, #0f3680 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(27, 87, 209, 0.35),
+                  0 2px 4px rgba(27, 87, 209, 0.25);
+    }
+    .pdf-download-btn {
+      position: fixed;
+      top: 76px;
+      right: 20px;
+      z-index: 1000;
+      background: #fff;
+      padding: 8px 16px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 
+                  0 2px 6px rgba(0, 0, 0, 0.04);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(27, 87, 209, 0.08);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 
+                   'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      color: #1b57d1;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .pdf-download-btn:hover {
+      background: rgba(27, 87, 209, 0.06);
+      color: #1445a8;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1),
+                  0 3px 8px rgba(0, 0, 0, 0.06);
+    }
+    .pdf-download-btn:active {
+      transform: translateY(0);
+    }
+    @media (max-width: 768px) {
+      .lang-switcher {
+        top: 10px;
+        right: 10px;
+        padding: 4px;
+        gap: 2px;
+      }
+      .lang-switcher a {
+        font-size: 12px;
+        padding: 6px 10px;
+        min-width: 48px;
+      }
+      .pdf-download-btn {
+        top: 60px;
+        right: 10px;
+        font-size: 12px;
+        padding: 6px 12px;
+      }
+    }
+    [data-lang] {
+      display: none;
+    }
+    [data-lang="ru"] {
+      display: block;
+    }
+    html[lang="en"] [data-lang="en"] {
+      display: block;
+    }
+    html[lang="en"] [data-lang="ru"] {
+      display: none;
+    }
+    .work-grid {
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap:36px;
+      padding:22px 0;
+      border-top:1px solid #eee;
+    }
+    .left-title { font-size:26px; font-weight:800; margin:0; }
+    .left-dates { font-size:16px; color:#444; font-style:italic; margin-top:6px; }
+    .left-company { margin-top:16px; font-size:18px; }
+    .left-company a {
+      color:#1b57d1;
+      font-weight:800;
+      text-decoration:underline;
+    }
+    .left-about { margin-top:10px; font-size:16px; color:#333; }
+    .right ul { margin:0; padding-left:22px; }
+    .right li { font-size:18px; margin-bottom:12px; }
+    @media (max-width: 900px) {
+      .work-grid { 
+        grid-template-columns: 1fr; 
+        gap: 14px; 
+      }
+    }
+    @media (max-width: 768px) {
+      #resume-content {
+        padding: 24px 16px !important;
+      }
+      h1 {
+        font-size: 32px !important;
+      }
+      h2 {
+        font-size: 28px !important;
+      }
+      .left-title {
+        font-size: 22px !important;
+      }
+      .left-dates {
+        font-size: 14px !important;
+      }
+      .left-company {
+        font-size: 16px !important;
+      }
+      .left-about {
+        font-size: 14px !important;
+      }
+      .right li {
+        font-size: 16px !important;
+        margin-bottom: 10px !important;
+      }
+      p {
+        font-size: 16px !important;
+      }
+      header > div {
+        font-size: 16px !important;
+      }
+    }
+    @media print {
+    @media print {
+      .lang-switcher,
+      .pdf-download-btn,
+      .lang-switcher *,
+      .pdf-download-btn * {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      body {
+        background: #fff !important;
+      }
+      .work-grid {
+        display: block !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        padding: 20px 0 !important;
+        border-top: 1px solid #eee !important;
+        margin-bottom: 20px !important;
+      }
+      .work-grid > div:first-child {
+        margin-bottom: 12px !important;
+        padding-bottom: 8px !important;
+        border-bottom: 1px solid #e6e6eb !important;
+      }
+      .work-grid > div:last-child {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      .work-grid > div {
+        display: block !important;
+        width: 100% !important;
+      }
+      .left-title {
+        font-size: 24px !important;
+        margin-bottom: 4px !important;
+      }
+      .left-dates {
+        font-size: 14px !important;
+        margin-bottom: 8px !important;
+      }
+      .left-company {
+        font-size: 16px !important;
+        margin-bottom: 8px !important;
+      }
+      .left-about {
+        font-size: 14px !important;
+        margin-bottom: 12px !important;
+      }
+      .right {
+        margin-top: 0 !important;
+      }
+      .right ul {
+        padding-left: 20px !important;
+      }
+      .right li {
+        font-size: 16px !important;
+        margin-bottom: 10px !important;
+        line-height: 1.5 !important;
+      }
+      h1, h2, h3 {
+        page-break-after: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body style="margin:0; padding:0; background:#fff;">
+<div class="lang-switcher">
+  <a href="?lang=ru" id="lang-ru">🇷🇺 RU</a>
+  <a href="?lang=en" id="lang-en">🇬🇧 EN</a>
+</div>
+
+<a href="Nikolaev_Igor_CV_RU.pdf" class="pdf-download-btn" id="pdf-download-btn" download>
+  <span>📄</span>
+  <span data-lang="ru">Скачать PDF</span>
+  <span data-lang="en">Download PDF</span>
+</a>
+
+<section id="resume-content" style="
+  font-family: Inter, 'Segoe UI', -apple-system, BlinkMacSystemFont, 'San Francisco',
+               'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  color:#111;
+  line-height:1.45;
+  letter-spacing:0.01em;
+  max-width:1080px;
+  margin:0 auto;
+  padding:32px 24px;
+">
+
+<header>
+  <h1 style="font-size:40px; margin:0; font-weight:800; letter-spacing:-0.02em;">
+    <span data-lang="ru">Николаев Игорь</span>
+    <span data-lang="en">Igor Nikolaev</span>
+  </h1>
+
+  <div style="margin-top:6px; font-size:18px; color:#333;">
+    CTO · VP of Engineering · Head of Engineering
+  </div>
+
+  <div style="margin-top:10px; font-size:16px; color:#555;">
+    <span data-lang="ru">Тбилиси · Remote / Hybrid ·</span>
+    <span data-lang="en">Tbilisi · Remote / Hybrid ·</span>
+    <a href="mailto:igorabcp@gmail.com" style="color:#1b57d1; text-decoration:underline;">
+      igorabcp@gmail.com
+    </a>
+  </div>
+
+  <p style="margin-top:22px; font-size:22px; font-weight:700;">
+    <span data-lang="ru">Строю инженерные организации, платформы и процессы «под масштаб» — делаю delivery предсказуемым, а эффективность независимой от размера команды за счёт AI, no-code / low-code и стандартизации.</span>
+    <span data-lang="en">Building engineering organizations, platforms, and processes "for scale" — making delivery predictable and efficiency independent of team size through AI, no-code / low-code, and standardization.</span>
+  </p>
+
+  <p style="margin-top:14px; font-size:18px;">
+    <span data-lang="ru">Инженерный лидер с 8+ годами опыта. Специализируюсь на быстром построении команд и технологических функций с нуля и достижении измеримых результатов в условиях ограниченных ресурсов.</span>
+    <span data-lang="en">Engineering leader with 8+ years of experience. Specializing in rapid team and technology function building from scratch and achieving measurable results with limited resources.</span>
+  </p>
+
+  <p style="margin-top:10px; font-size:18px;">
+    <strong><span data-lang="ru">0→1→Scale:</span><span data-lang="en">0→1→Scale:</span></strong>
+    <span data-lang="ru">формирование архитектуры, процессов, data-контуров и продуктовых платформ с нуля и дальнейшее масштабирование без потери управляемости.</span>
+    <span data-lang="en">forming architecture, processes, data pipelines, and product platforms from scratch and scaling further without losing manageability.</span>
+  </p>
+
+  <p style="margin-top:10px; font-size:18px;">
+    <strong><span data-lang="ru">Fast execution via AI & modern tooling:</span><span data-lang="en">Fast execution via AI & modern tooling:</span></strong>
+    <span data-lang="ru">выстраиваю полный SDLC с использованием AI-инструментов, no-code / low-code решений и автоматизации, позволяя маленьким командам выполнять объём работ уровня крупных IT-департаментов.</span>
+    <span data-lang="en">building a complete SDLC using AI tools, no-code / low-code solutions, and automation, enabling small teams to deliver work volumes typical of large IT departments.</span>
+  </p>
+
+  <p style="margin-top:10px; font-size:18px;">
+    <strong><span data-lang="ru">Key highlight:</span><span data-lang="en">Key highlight:</span></strong>
+    <span data-lang="ru">за счёт AI-подходов и правильно выстроенных процессов увеличивал скорость поставки примерно в 3 раза при существенно меньшем размере команды.</span>
+    <span data-lang="en">through AI approaches and well-structured processes, increased delivery speed approximately 3x with significantly smaller team size.</span>
+  </p>
+</header>
+
+<hr style="margin:28px 0; border:none; border-top:1px solid #e6e6eb;">
+
+<h2 style="font-size:34px; font-weight:800; margin:0 0 18px;">
+  <span data-lang="ru">Опыт работы</span>
+  <span data-lang="en">Work experience</span>
+</h2>
+
+<!-- ================= LOOV ================= -->
+<section class="work-grid">
+  <div>
+    <h3 class="left-title">CTO / Head of Engineering</h3>
+    <div class="left-dates">March 2024 — present</div>
+
+    <div class="left-company">
+      <a href="https://loov.ru">LOOV</a> — <span data-lang="ru">retail & medtech</span><span data-lang="en">retail & medtech</span>
+    </div>
+
+    <div class="left-about">
+      <span data-lang="ru">Цифровая платформа и внутренние продукты для всей операционной деятельности компании (120+ сотрудников).</span>
+      <span data-lang="en">Digital platform and internal products for all operational activities of the company (120+ employees).</span>
+    </div>
+  </div>
+
+  <div class="right">
+    <ul>
+      <li>
+        <span data-lang="ru">Сформировал и возглавил технологическую функцию компании, выстроив устойчивую IT-инфраструктуру и единый цифровой контур для бизнеса.</span>
+        <span data-lang="en">Formed and led the company's technology function, building a robust IT infrastructure and unified digital ecosystem for the business.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">В течение года принял и реализовал стратегическое решение — <strong>перевёл компанию на единую CRM-платформу</strong>, объединив операционные процессы и данные.</span>
+        <span data-lang="en">Within a year, made and executed a strategic decision — <strong>migrated the company to a unified CRM platform</strong>, consolidating operational processes and data.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Спроектировал и запустил <strong>data-платформу с DWH</strong>, обеспечив почти real-time обновление данных и более <strong>60 управленческих и операционных дашбордов</strong>.</span>
+        <span data-lang="en">Designed and launched a <strong>data platform with DWH</strong>, enabling near real-time data updates and <strong>60+ management and operational dashboards</strong>.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Сформировал data-направление и pipeline работы с данными, превратив аналитику из отчётности в источник постоянной бизнес-ценности.</span>
+        <span data-lang="en">Established the data direction and data pipeline workflows, transforming analytics from reporting into a source of continuous business value.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Реализовал клиентские профили и сегментацию, заложив основу для персонализированных сценариев и запуска клиентского мобильного приложения.</span>
+        <span data-lang="en">Implemented customer profiles and segmentation, laying the foundation for personalized scenarios and the launch of a customer mobile application.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Запустил <strong>мобильное приложение для сотрудников</strong> как единый операционный интерфейс: дашборды, задачи, база знаний, стандарты, команды с возможностью дальнейшего расширения функциональности.</span>
+        <span data-lang="en">Launched an <strong>employee mobile application</strong> as a unified operational interface: dashboards, tasks, knowledge base, standards, teams with the ability to further expand functionality.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Разработал набор внутренних инструментов, расширяющих возможности CRM и выводящих её на уровень операционной платформы.</span>
+        <span data-lang="en">Developed a set of internal tools that extend CRM capabilities and elevate it to an operational platform level.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Запустил <strong>клиентское мобильное приложение</strong>: заказы, рецепты, очки, гарантии, программа лояльности, уровни и бонусные баллы.</span>
+        <span data-lang="en">Launched a <strong>customer mobile application</strong>: orders, prescriptions, points, warranties, loyalty program, tiers, and bonus points.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Создал отдельный технологический контур для глобального направления, позволив быстро тестировать гипотезы нового бизнеса.</span>
+        <span data-lang="en">Created a separate technology ecosystem for the global direction, enabling rapid testing of new business hypotheses.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Выстроил единый контур внутренних процессов: таск-трекинг, централизованную базу знаний и инструменты командной работы.</span>
+        <span data-lang="en">Built a unified internal process ecosystem: task tracking, centralized knowledge base, and team collaboration tools.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Весь объём разработки и платформ был реализован <strong>командой из 10 человек</strong>, при том что аналогичный масштаб задач в классической модели требует <strong>40–50 специалистов</strong>; за счёт AI-инструментов и современных подходов <strong>скорость разработки увеличена примерно в 3 раза</strong>.</span>
+        <span data-lang="en">All development and platforms were delivered by a <strong>team of 10 people</strong>, while a similar scope of work in a classical model requires <strong>40–50 specialists</strong>; through AI tools and modern approaches, <strong>development speed increased approximately 3x</strong>.</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= DODO ================= -->
+<section class="work-grid">
+  <div>
+    <h3 class="left-title">Engineering Lead → Product Owner</h3>
+    <div class="left-dates">March 2021 — February 2024</div>
+
+    <div class="left-company">
+      <a href="https://dodo.dev">Dodo Engineering</a> — DodoIS
+    </div>
+
+    <div class="left-about">
+      <span data-lang="ru">HR-платформа для сети 1000+ ресторанов и 30 000+ сотрудников.</span>
+      <span data-lang="en">HR platform for a network of 1000+ restaurants and 30,000+ employees.</span>
+    </div>
+  </div>
+
+  <div class="right">
+    <ul>
+      <li>
+        <span data-lang="ru">Прошёл путь от backend-разработчика до Engineering Lead и Product Owner HR-направления.</span>
+        <span data-lang="en">Grew from backend developer to Engineering Lead and Product Owner of the HR direction.</span>
+      </li>
+  
+      <li>
+        <span data-lang="ru">Руководил двумя кросс-функциональными командами полного цикла (разработка, тестирование, дизайн), отвечая за delivery, качество и развитие людей.</span>
+        <span data-lang="en">Led two cross-functional full-cycle teams (development, testing, design), responsible for delivery, quality, and people development.</span>
+      </li>
+  
+      <li>
+        <span data-lang="ru">Выступал техническим лидером команды: проводил one-on-one, нанимал разработчиков, вырастил нескольких инженеров до высоких грейдов внутри Dodo.</span>
+        <span data-lang="en">Acted as technical team leader: conducted one-on-ones, hired developers, grew several engineers to high grades within Dodo.</span>
+      </li>
+  
+      <li>
+        <span data-lang="ru">В сжатые сроки спроектировал и запустил <strong>COVID-мониторинг для сотрудников</strong>, обеспечив контроль состояния персонала и поддержку операционных процессов в период пандемии.</span>
+        <span data-lang="en">Designed and launched <strong>COVID monitoring for employees</strong> in a short timeframe, ensuring staff health tracking and operational process support during the pandemic.</span>
+      </li>
+  
+      <li>
+        <span data-lang="ru">Спроектировал и запустил масштабную HR-платформу для сети с <strong>30 000+ сотрудников</strong> и высокой текучкой, покрыв найм, онбординг и ключевые HR-процессы.</span>
+        <span data-lang="en">Designed and launched a large-scale HR platform for a network with <strong>30,000+ employees</strong> and high turnover, covering hiring, onboarding, and key HR processes.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Реализовал и масштабировал систему персонализированных коммуникаций для сотрудников: <strong>30k пользователей, 100k сообщений в неделю</strong>, гибкая админка для филиалов и регионов.</span>
+        <span data-lang="en">Implemented and scaled a personalized employee communication system: <strong>30k users, 100k messages per week</strong>, flexible admin panel for branches and regions.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Запустил инструменты сбора обратной связи: регулярные опросы, индекс удовлетворённости сотрудников, аналитика состояния команд и регионов.</span>
+        <span data-lang="en">Launched feedback collection tools: regular surveys, employee satisfaction index, analytics on team and region status.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Создал внутренние продукты для мотивации и вовлечённости: магазин мерча, конкурсы для сотрудников, интегрированные с экосистемой Dodo.</span>
+        <span data-lang="en">Created internal products for motivation and engagement: merch store, employee contests, integrated with the Dodo ecosystem.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">В условиях ограниченных ресурсов сделал упор на <strong>no-code / low-code решения</strong>, обеспечив быстрый запуск и масштабирование платформ.</span>
+        <span data-lang="en">With limited resources, focused on <strong>no-code / low-code solutions</strong>, enabling rapid launch and platform scaling.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Инициировал и реализовал системную миграцию легаси с параллельным развитием нового функционала без остановки бизнес-процессов.</span>
+        <span data-lang="en">Initiated and executed a systematic legacy migration with parallel development of new functionality without disrupting business processes.</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= MOEX ================= -->
+<section class="work-grid">
+  <div>
+    <h3 class="left-title">Full-Stack Engineer (FinTech)</h3>
+    <div class="left-dates">December 2019 — March 2021</div>
+
+    <div class="left-company">
+      <a href="https://www.moex.com">Moscow Exchange</a>
+    </div>
+
+    <div class="left-about">
+      <span data-lang="ru">Высоконагруженные сервисы и клиентская регистрация для биржевой инфраструктуры.</span>
+      <span data-lang="en">High-load services and client registration for exchange infrastructure.</span>
+    </div>
+  </div>
+
+  <div class="right">
+    <ul>
+      <li>
+        <span data-lang="ru">Спроектировал и реализовал новое ядро системы регистрации клиентов для биржевой инфраструктуры.</span>
+        <span data-lang="en">Designed and implemented a new core client registration system for exchange infrastructure.</span>
+      </li>
+  
+      <li>
+        <span data-lang="ru">Перевёл процесс регистрации в API-ориентированный высокопроизводительный online-контур, сократив время регистрации <strong>с часов до секунд</strong>.</span>
+        <span data-lang="en">Transformed the registration process into an API-oriented high-performance online workflow, reducing registration time <strong>from hours to seconds</strong>.</span>
+      </li>
+  
+      <li>
+        <span data-lang="ru">Реализовал микросервисную архитектуру (20+ сервисов) с высокими требованиями к надёжности, безопасности и масштабируемости.</span>
+        <span data-lang="en">Implemented a microservices architecture (20+ services) with high requirements for reliability, security, and scalability.</span>
+      </li>
+  
+      <li>
+        <span data-lang="ru">Полностью переработал сложную легаси-логику: декомпозировал тысячи строк SQL в тестируемые и поддерживаемые сервисы.</span>
+        <span data-lang="en">Completely refactored complex legacy logic: decomposed thousands of lines of SQL into testable and maintainable services.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Встроил в процесс регистрации валидацию данных, проверки и внутренние контуры безопасности.</span>
+        <span data-lang="en">Integrated data validation, checks, and internal security workflows into the registration process.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Обеспечил стабильный запуск, рост трафика и эксплуатационную устойчивость ключевого онбординг-контура биржи.</span>
+        <span data-lang="en">Ensured stable launch, traffic growth, and operational resilience of the exchange's key onboarding workflow.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Участвовал в онбординге разработчиков и формировании инженерных стандартов для высоконагруженных финтех-систем.</span>
+        <span data-lang="en">Participated in developer onboarding and establishing engineering standards for high-load fintech systems.</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= IT GLOBAL ================= -->
+<section class="work-grid">
+  <div>
+    <h3 class="left-title">Full-Stack Engineer</h3>
+    <div class="left-dates">November 2017 — December 2019</div>
+
+    <div class="left-company">
+      <a href="https://itglobal.ru">IT Global</a>
+    </div>
+
+    <div class="left-about">
+      <span data-lang="ru">Инфраструктурные и финтех-проекты для корпоративных заказчиков.</span>
+      <span data-lang="en">Infrastructure and fintech projects for corporate clients.</span>
+    </div>
+  </div>
+
+  <div class="right">
+    <ul>
+      <li>
+        <span data-lang="ru">Спроектировал и реализовал высокопроизводительный торговый бот для внебиржевых рынков: обработка рыночных данных в реальном времени, торговая логика, устойчивость к сбоям и отказам.</span>
+        <span data-lang="en">Designed and implemented a high-performance trading bot for OTC markets: real-time market data processing, trading logic, resilience to failures and outages.</span>
+      </li>
+  
+      <li>
+        <span data-lang="ru">Разработал архитектуру и алгоритмы торговых систем для работы в нетипичных рыночных условиях, обеспечив стабильность, расширяемость и контроль рисков.</span>
+        <span data-lang="en">Developed architecture and algorithms for trading systems operating in atypical market conditions, ensuring stability, extensibility, and risk control.</span>
+      </li>
+  
+      <li>
+        <span data-lang="ru">Полностью реализовал административную часть образовательной платформы для финансового рынка (контент, роли, доступы, управление пользователями и правами).</span>
+        <span data-lang="en">Fully implemented the administrative part of an educational platform for the financial market (content, roles, access, user and permission management).</span>
+      </li>
+  
+      <li>
+        <span data-lang="ru">Спроектировал и разработал ключевые модули крупной криптоторговой платформы на раннем этапе рынка: высокие нагрузки, быстрые релизы, масштабируемые backend-компоненты.</span>
+        <span data-lang="en">Designed and developed key modules of a large crypto trading platform in the early market stage: high loads, rapid releases, scalable backend components.</span>
+      </li>
+  
+      <li>
+        <span data-lang="ru">Разработал внутреннее desktop-приложение для торговли деривативами (опционы и фьючерсы), с упором на производительность и надёжность.</span>
+        <span data-lang="en">Developed an internal desktop application for derivatives trading (options and futures), with emphasis on performance and reliability.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Создал мобильное торговое приложение для финансового сектора (Xamarin): клиентская логика, интеграция с торговыми системами, стабильная работа под нагрузкой.</span>
+        <span data-lang="en">Created a mobile trading application for the financial sector (Xamarin): client logic, integration with trading systems, stable operation under load.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Полностью спроектировал и реализовал мобильное приложение для управления мероприятиями и событиями: бизнес-логика, алгоритмы, архитектура с расчётом на быстрое развитие и масштабирование функциональности.</span>
+        <span data-lang="en">Fully designed and implemented a mobile application for event management: business logic, algorithms, architecture designed for rapid development and functionality scaling.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">На всех проектах закладывал архитектурные решения, обеспечивающие долгосрочную поддерживаемость, быстрый выпуск новых фич и масштабирование систем.</span>
+        <span data-lang="en">On all projects, established architectural solutions ensuring long-term maintainability, rapid feature releases, and system scaling.</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= KILOGRAPP ================= -->
+<section class="work-grid">
+  <div>
+    <h3 class="left-title">iOS Developer (Intern)</h3>
+    <div class="left-dates">January 2017 — March 2017</div>
+
+    <div class="left-company">
+      <a href="https://github.com/Kilograpp">Kilograpp</a>
+    </div>
+
+    <div class="left-about">
+      <span data-lang="ru">Студия мобильной разработки.</span>
+      <span data-lang="en">Mobile development studio.</span>
+    </div>
+  </div>
+
+  <div class="right">
+    <ul>
+      <li>
+        <span data-lang="ru">С нуля освоил iOS-разработку (Objective-C, Swift) за короткий период, сразу приступив к работе над коммерческими проектами.</span>
+        <span data-lang="en">Mastered iOS development (Objective-C, Swift) from scratch in a short period, immediately starting work on commercial projects.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Реализовал ключевую фичу поиска заведений для travel-приложения (аналог TripAdvisor): геолокация, фильтры, автодополнение, интеграция с картами и рейтингами.</span>
+        <span data-lang="en">Implemented a key venue search feature for a travel application (similar to TripAdvisor): geolocation, filters, autocomplete, integration with maps and ratings.</span>
+      </li>
+
+      <li>
+        <span data-lang="ru">Участвовал в разработке мобильного приложения для посетителей театров и оперы: расписание, билеты, навигация по залам.</span>
+        <span data-lang="en">Participated in developing a mobile application for theater and opera visitors: schedules, tickets, hall navigation.</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+</section>
+
+<script>
+  (function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const lang = urlParams.get('lang') || 'ru';
+    document.documentElement.lang = lang;
+    
+    const langRu = document.getElementById('lang-ru');
+    const langEn = document.getElementById('lang-en');
+    
+    if (lang === 'en') {
+      if (langEn) langEn.classList.add('active');
+      if (langRu) langRu.classList.remove('active');
+    } else {
+      if (langRu) langRu.classList.add('active');
+      if (langEn) langEn.classList.remove('active');
+    }
+    
+    if (langRu) {
+      const currentUrl = new URL(window.location);
+      currentUrl.searchParams.set('lang', 'ru');
+      langRu.href = currentUrl.toString();
+    }
+    if (langEn) {
+      const currentUrl = new URL(window.location);
+      currentUrl.searchParams.set('lang', 'en');
+      langEn.href = currentUrl.toString();
+    }
+  })();
+
+  (function() {
+    const pdfBtn = document.getElementById('pdf-download-btn');
+    if (!pdfBtn) return;
+
+    const updatePdfLink = () => {
+      const currentLang = document.documentElement.lang || 'ru';
+      const filename = currentLang === 'ru' 
+        ? 'Nikolaev_Igor_CV_RU.pdf' 
+        : 'Nikolaev_Igor_CV_EN.pdf';
+      pdfBtn.href = filename;
+    };
+
+    updatePdfLink();
+
+    const langRu = document.getElementById('lang-ru');
+    const langEn = document.getElementById('lang-en');
+    
+    if (langRu) {
+      langRu.addEventListener('click', () => {
+        setTimeout(updatePdfLink, 100);
+      });
+    }
+    if (langEn) {
+      langEn.addEventListener('click', () => {
+        setTimeout(updatePdfLink, 100);
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
