@@ -62,8 +62,10 @@ jobs:
         run: ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" 'whoami; docker --version'
 
       - name: Sync static site to server
+        # --chmod ensures nginx (inside the container, runs as user `nginx`)
+        # can read every file regardless of the runner's umask.
         run: |
-          rsync -az --delete \
+          rsync -az --delete --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r \
             -e "ssh -o StrictHostKeyChecking=no" \
             ./out/ \
             "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/site/"
