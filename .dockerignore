@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+.git
+.github
+.claude
+.DS_Store
+*.log
+.pnpm-store
+coverage
+.turbo
+deploy/site

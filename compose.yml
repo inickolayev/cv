@@ -1,0 +1,86 @@
+# Local docker-compose for the CV project.
+# Everything runs through containers — never `pnpm` on the host.
+#
+# Common workflows:
+#   docker compose --profile dev   up                    # hot-reload dev server on :3000
+#   docker compose --profile build run --rm build        # build static export to ./out
+#   docker compose --profile prod  up --build web        # local prod test on :8080
+#   docker compose --profile lint  run --rm lint         # type-check + next lint
+
+services:
+  # ------------------------------------------------------------------
+  # dev: Next.js dev server with hot reload, source bind-mounted
+  # ------------------------------------------------------------------
+  dev:
+    profiles: [dev]
+    image: cv-dev:local
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /app
+    environment:
+      - NEXT_TELEMETRY_DISABLED=1
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - .:/app
+      - cv_node_modules:/app/node_modules
+      - cv_next_cache:/app/.next
+    ports:
+      - "3000:3000"
+    command: ["sh", "-c", "pnpm install --prefer-offline && pnpm dev --hostname 0.0.0.0"]
+
+  # ------------------------------------------------------------------
+  # build: one-shot static export -> ./out (use `run --rm build`)
+  # The actual `pnpm install && next build` runs *inside* the multi-stage
+  # Dockerfile (cached layers, no host node_modules), the container just
+  # copies the resulting /app/out onto the host bind-mounted volume.
+  # ------------------------------------------------------------------
+  build:
+    profiles: [build]
+    image: cv-builder:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    command: ["sh", "-c", "rm -rf /out/* /out/.[!.]* 2>/dev/null; cp -a /app/out/. /out/"]
+    volumes:
+      - ./out:/out
+
+  # ------------------------------------------------------------------
+  # lint: type-check via tsc inside the container (use `run --rm lint`)
+  # ------------------------------------------------------------------
+  lint:
+    profiles: [lint]
+    image: cv-dev:local
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - cv_node_modules:/app/node_modules
+    command: ["sh", "-c", "pnpm install --frozen-lockfile && pnpm exec tsc --noEmit"]
+
+  # ------------------------------------------------------------------
+  # web: production-style nginx image, built end-to-end inside Docker.
+  # Useful for local prod parity testing on :8080
+  # ------------------------------------------------------------------
+  web:
+    profiles: [prod]
+    image: cv:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    ports:
+      - "8080:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  cv_node_modules:
+  cv_next_cache:

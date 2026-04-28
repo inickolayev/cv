@@ -1,0 +1,28 @@
+{
+  "name": "cv-inikolaev",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "preview": "npx serve out"
+  },
+  "dependencies": {
+    "next": "^16.2.4",
+    "next-themes": "^0.4.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "pnpm@10.21.0",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

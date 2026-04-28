@@ -1,0 +1,107 @@
+name: Deploy to chesswin_server
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build static export inside Docker
+        # Multi-stage build: stops at the `export` stage and writes /out to ./out via the local exporter.
+        run: |
+          docker buildx build \
+            --target export \
+            --output type=local,dest=./out \
+            --cache-from type=local,src=/tmp/.buildx-cache \
+            --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
+            .
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache || true
+
+      - name: Verify build output
+        run: |
+          test -f out/index.html
+          test -f out/ru/index.html
+          test -f out/Nikolaev_Igor_CV_EN.pdf
+          test -f out/Nikolaev_Igor_CV_RU.pdf
+          echo "Build artifacts OK ($(du -sh out | cut -f1))"
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Ensure remote directories
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          ssh -i ~/.ssh/id_ed25519 "${SSH_USER}@${SSH_HOST}" \
+            'mkdir -p /opt/cv/site'
+
+      - name: Sync static site to server
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_ed25519" \
+            ./out/ \
+            "${SSH_USER}@${SSH_HOST}:/opt/cv/site/"
+
+      - name: Sync deploy compose + nginx config to server
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          rsync -az \
+            -e "ssh -i ~/.ssh/id_ed25519" \
+            ./deploy/docker-compose.yml ./deploy/nginx.conf \
+            "${SSH_USER}@${SSH_HOST}:/opt/cv/"
+
+      - name: Roll out via docker compose
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          ssh -i ~/.ssh/id_ed25519 "${SSH_USER}@${SSH_HOST}" \
+            'cd /opt/cv && docker compose pull && docker compose up -d --remove-orphans && docker image prune -f'
+
+      - name: Smoke test public URL
+        run: |
+          for i in 1 2 3 4 5; do
+            code=$(curl -sk -o /dev/null -w "%{http_code}" https://inikolaev.tech/ || true)
+            echo "Attempt $i: HTTP $code"
+            if [ "$code" = "200" ]; then exit 0; fi
+            sleep 6
+          done
+          echo "Public URL did not return 200 — check Traefik logs"
+          exit 1

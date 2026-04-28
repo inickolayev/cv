@@ -1,0 +1,32 @@
+services:
+  cv:
+    image: nginx:1.27-alpine
+    container_name: cv
+    restart: unless-stopped
+    volumes:
+      - ./site:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+
+      # HTTPS router for inikolaev.tech (and www if present)
+      - "traefik.http.routers.cv.rule=Host(`inikolaev.tech`) || Host(`www.inikolaev.tech`)"
+      - "traefik.http.routers.cv.entrypoints=websecure"
+      - "traefik.http.routers.cv.tls=true"
+      - "traefik.http.routers.cv.tls.certresolver=le"
+      - "traefik.http.routers.cv.middlewares=secure-headers@file"
+      - "traefik.http.services.cv.loadbalancer.server.port=80"
+
+      # HTTP -> HTTPS redirect
+      - "traefik.http.routers.cv-http.rule=Host(`inikolaev.tech`) || Host(`www.inikolaev.tech`)"
+      - "traefik.http.routers.cv-http.entrypoints=web"
+      - "traefik.http.routers.cv-http.middlewares=cv-https-redirect"
+      - "traefik.http.middlewares.cv-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.cv-https-redirect.redirectscheme.permanent=true"
+
+networks:
+  traefik:
+    external: true
