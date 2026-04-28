@@ -12,8 +12,8 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
 
-      # HTTPS router for inikolaev.tech (and www if present)
-      - "traefik.http.routers.cv.rule=Host(`inikolaev.tech`) || Host(`www.inikolaev.tech`)"
+      # HTTPS router for inikolaev.tech
+      - "traefik.http.routers.cv.rule=Host(`inikolaev.tech`)"
       - "traefik.http.routers.cv.entrypoints=websecure"
       - "traefik.http.routers.cv.tls=true"
       - "traefik.http.routers.cv.tls.certresolver=le"
@@ -21,7 +21,7 @@ services:
       - "traefik.http.services.cv.loadbalancer.server.port=80"
 
       # HTTP -> HTTPS redirect
-      - "traefik.http.routers.cv-http.rule=Host(`inikolaev.tech`) || Host(`www.inikolaev.tech`)"
+      - "traefik.http.routers.cv-http.rule=Host(`inikolaev.tech`)"
       - "traefik.http.routers.cv-http.entrypoints=web"
       - "traefik.http.routers.cv-http.middlewares=cv-https-redirect"
       - "traefik.http.middlewares.cv-https-redirect.redirectscheme.scheme=https"
