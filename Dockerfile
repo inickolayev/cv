@@ -17,11 +17,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN pnpm build
 
-# ---------- 3. export: tiny stage that holds just out/ ----------
-# (handy for `docker compose run --rm export` to pull artefacts to the host)
-FROM alpine:3.20 AS export
-WORKDIR /out
-COPY --from=builder /app/out/ ./
+# ---------- 3. export: scratch stage with the static export at /
+# Used by `docker buildx build --target export --output type=local,dest=./out .`
+# `scratch` keeps the rootfs empty so the local exporter writes only out/* — not /bin, /etc etc.
+FROM scratch AS export
+COPY --from=builder /app/out/ /
 
 # ---------- 4. runtime: nginx serving the static export ----------
 FROM nginx:1.27-alpine AS runtime
